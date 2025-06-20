@@ -3,6 +3,9 @@ import bcrypt from 'bcrypt';
 import { v2 as cloudinary } from "cloudinary";
 import doctorModel from "../models/Doctormodel.js";
 import jwt from "jsonwebtoken"
+import appointmentModel from "../models/appointmentModel.js";
+import userModel from "../models/userModel.js";
+
 
 
 //Api for adding doctor 
@@ -90,5 +93,84 @@ const allDoctors = async(req,res)=>{
     }
 
 }
+//api to get all appointments  list
+const appointmentsAdmin = async(req,res) => {
+    try {
+        const appointments = await appointmentModel.find({})
+        res.json({success:true,appointments})
+    } catch (error) {
+        console.log(error)
+        res.json({success:false,message:error.message})
+    }
+}   
+//api for appointment cancellation by admin
 
-export { addDoctor,loginAdmin,allDoctors }
+const appointmentCancel = async (req, res) => {
+    try {
+        const { appointmentId } = req.body;
+
+        const appointmentData = await appointmentModel.findById(appointmentId);
+
+        // // Verify appointment user
+        // if (!appointmentData) {
+        //     return res.json({ success: false, message: 'Appointment not found' });
+        // }
+
+        // if (appointmentData.userId.toString() !== userId) {
+        //     return res.json({ success: false, message: 'Unauthorized action' });
+        // }
+
+        await appointmentModel.findByIdAndUpdate(appointmentId, { cancelled: true });
+
+        // Releasing doctor slot
+        const { docId, slotDate, slotTime } = appointmentData;
+        const doctorData = await doctorModel.findById(docId);
+
+        if (!doctorData) {
+            return res.json({ success: false, message: 'Doctor not found' });
+        }
+
+        let slots_booked = doctorData.slots_booked || {};
+
+        // Ensure slotDate exists in slots_booked
+        if (slots_booked[slotDate]) {
+            slots_booked[slotDate] = slots_booked[slotDate].filter(e => e !== slotTime);
+
+            if (slots_booked[slotDate].length === 0) {
+                delete slots_booked[slotDate];
+            }
+
+            await doctorModel.findByIdAndUpdate(docId, { slots_booked });
+        }
+
+        res.json({ success: true, message: 'Appointment Cancelled' });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+};
+//api to get dashboard details for  admin pannel
+
+const adminDashboard = async (req, res) => {
+    try {
+        const doctors = await doctorModel.find({})
+        const users = await userModel.find({})
+        const appointments = await appointmentModel.find({})
+
+        const dashData ={
+            doctors: doctors.length,
+            appointments: appointments.length,
+            patients: users.length,
+            latestAppointment: appointments.reverse().slice(0,5)
+        }
+        res.json({ success: true, dashData }); 
+        
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+};
+
+
+export { addDoctor,loginAdmin,allDoctors ,appointmentsAdmin,appointmentCancel, adminDashboard }

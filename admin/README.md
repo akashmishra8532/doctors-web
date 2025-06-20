@@ -91,3 +91,22 @@ const DoctorsList = () => {
 };
 
 export default DoctorsList;
+
+======>appContext.jsx add this line if needed to see am and pm in time slot
+const slotTimeFormat = (time) => {
+        if (!time) return "N/A";
+      
+        const [hourStr, minuteStr] = time.split(":");
+        let hour = parseInt(hourStr);
+        const minute = parseInt(minuteStr);
+      
+        if (isNaN(hour) || isNaN(minute)) return "Invalid time";
+      
+        const ampm = hour >= 12 ? "PM" : "AM";
+        hour = hour % 12 || 12; // convert to 12-hour format
+        return `${hour}:${minuteStr} ${ampm}`;
+      }
+
+
+
+
