@@ -80,7 +80,6 @@ const AdminContextProvider = (props) => {
             if (data.success) {
                 setDashData(data.dashData)
                 console.log(data.dashData)
-
             } else {
                 toast.error(data.message)
             }
@@ -88,6 +87,7 @@ const AdminContextProvider = (props) => {
             toast.error(error.message)
         }
     }
+    
 
     const value = {
         aToken, setAToken,
