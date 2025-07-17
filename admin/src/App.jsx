@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import Login from './pages/Login'
 import { ToastContainer, toast } from 'react-toastify';
-import { AdminContext } from './context/AdminContext';
+
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import { Route, Routes } from 'react-router-dom';
@@ -11,8 +11,9 @@ import AddDoctor from './pages/Admin/AddDoctor';
 import DoctorsList from './pages/Admin/DoctorsList';
 import { DoctorContext } from './context/DoctorContext';
 import DoctorDashboard from './pages/Doctor/DoctorDashboard';
-import DoctorAppointments from './pages/Doctor/DoctorAppointments';
 import DoctorProfile from './pages/Doctor/DoctorProfile';
+import DoctorAppointments from './pages/Doctor/DoctorAppointments';
+import { AdminContext } from './context/adminContext';
 
 const App = () => {
 

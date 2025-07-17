@@ -7,11 +7,20 @@ const Navbar = () => {
 
     const {aToken,setAToken} = useContext(AdminContext)
     const navigate = useNavigate()
-    const logout = () =>{
-        navigate('/')
-        aToken && setAToken('')
-        aToken && localStorage.removeItem('aToken')
+    const logout = () => {
+      navigate('/')
+    
+      if (aToken) {
+        setAToken('')
+        localStorage.removeItem('aToken')
+      }
+    
+      if (dToken) {
+        setDToken('')
+        localStorage.removeItem('dToken')
+      }
     }
+    
 
     
   return (
