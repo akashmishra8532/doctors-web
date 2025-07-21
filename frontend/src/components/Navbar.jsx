@@ -4,73 +4,96 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext';
 
 const Navbar = () => {
-
     const navigate = useNavigate();
-    const {token,setToken,userData}= useContext(AppContext)
+    const { token, setToken, userData } = useContext(AppContext)
     const [showMenu, setShowMenu] = useState(false);
-    
+
     const logout = () => {
         setToken(false)
         localStorage.removeItem('token')
     }
 
-
     return (
-        <div className='flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400'>
-            <img onClick={() => navigate('/')} className='w-44 cursor-pointer' src={assets.logo} alt='' />
-            <ul className='hidden md:flex items-start gap-5 font-medium'>
-                <NavLink to='/'>
-                    <li className='py-1'>HOME</li>
-                    <hr className='border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden' />
-                </NavLink >
-                <NavLink to='/doctors'>
-                    <li className='py-1'>ALL DOCTORS</li>
-                    <hr className='border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden' />
-                </NavLink>
-                <NavLink to='/about'>
-                    <li className='py-1'>ABOUT</li>
-                    <hr className='border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden' />
-                </NavLink>
-                <NavLink to='/contact'>
-                    <li className='py-1'>CONTACT</li>
-                    <hr className='border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden' />
-                </NavLink>
+        <div className='flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400 px-4 md:px-12 backdrop-blur-lg bg-white/30 shadow-md fixed top-0 left-0 right-0 z-30'>
+            <img onClick={() => navigate('/')} className='w-40 cursor-pointer hover:scale-105 transition' src={assets.logo} alt='Logo' />
 
+            <ul className='hidden md:flex items-center gap-8 font-semibold text-gray-700'>
+                {['/', '/doctors', '/about', '/contact'].map((path, idx) => {
+                    const names = ['HOME', 'ALL DOCTORS', 'ABOUT', 'CONTACT'];
+                    return (
+                        <NavLink 
+                            key={idx} 
+                            to={path}
+                            className={({ isActive }) => 
+                                `relative px-2 py-1 hover:text-primary transition 
+                                ${isActive ? 'text-primary after:absolute after:content-[""] after:h-[2px] after:bg-primary after:w-full after:bottom-0 after:left-0' : ''}`
+                            }
+                        >
+                            {names[idx]}
+                        </NavLink>
+                    )
+                })}
             </ul>
+
             <div className='flex items-center gap-4'>
                 {
-                    token && userData
-                        ?
+                    token && userData ? (
                         <div className='flex items-center gap-2 cursor-pointer group relative'>
-                            <img className='w-8 rounded-full' src={userData.image} />
-                            <img className='w-2.5 ' src={assets.dropdown_icon} />
-                            <div className='absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20 hidden group-hover:block'>
-                                <div className='min-w-48 bg-stone-100 rounded flex flex-col gap-4 p-4'>
-                                    <p onClick={() => navigate('my-profile')} className='hover:text-black cursor-pointer'>My Profile</p>
-                                    <p onClick={() => navigate('my-appointments')} className='hover:text-black cursor-pointer'>My Appointments</p>
-                                    <p onClick={logout} className='hover:text-black cursor-pointer'>Logout</p>
+                            <img className='w-9 rounded-full border-2 border-primary hover:scale-105 transition' src={userData.image} alt="Profile" />
+                            <img className='w-3 transition group-hover:rotate-180' src={assets.dropdown_icon} alt="Dropdown" />
+                            
+                            <div className='absolute top-full right-0 mt-3 bg-white shadow-lg rounded-xl overflow-hidden opacity-0 group-hover:opacity-100 transform scale-95 group-hover:scale-100 transition-all duration-200 z-20'>
+                                <div className='flex flex-col gap-3 px-5 py-4 text-sm text-gray-700'>
+                                    <p onClick={() => navigate('/my-profile')} className='hover:text-primary cursor-pointer'>My Profile</p>
+                                    <p onClick={() => navigate('/my-appointments')} className='hover:text-primary cursor-pointer'>My Appointments</p>
+                                    <p onClick={logout} className='hover:text-red-500 cursor-pointer'>Logout</p>
                                 </div>
                             </div>
                         </div>
-                        : <button onClick={() => navigate('/login')} className='bg-primary text-white px-8 py-3 rounded-full font-light hidden md:block'>Create account</button>
-
+                    ) : (
+                        <button 
+                            onClick={() => navigate('/login')} 
+                            className='bg-primary hover:bg-primary/90 text-white px-8 py-2.5 rounded-full shadow-md transition hidden md:block'
+                        >
+                            Create Account
+                        </button>
+                    )
                 }
-                <img onClick={() => setShowMenu(true)} className='w-6 md:hidden' src={assets.menu_icon} alt="" />
-                {/* ------------------------Mobile manu-------------------- */}
-                <div className={`${showMenu ? 'fixed w-full' : 'h-0 w-0'} right-0 top-0 bottom-0 z-20 overflow-hidden bg-white transition-all md:hidden`}>
-                    <div className='flex justify-between items-center px-5 py-6'>
-                        <img className='w-36' src={assets.logo} alt="Logo" />
-                        <img className='w-7' onClick={() => setShowMenu(false)} src={assets.cross_icon} alt="Close Menu"/>
-                    </div>
-                    <ul className='flex flex-col items-center gap-2 mt-5 px-5 text-lg font-medium'>
-                        <NavLink onClick={()=>setShowMenu(false)} to='/'><p className='px-4 py-2 rounded inline-block'>Home</p></NavLink>
-                        <NavLink onClick={()=>setShowMenu(false)} to='/doctors'><p className='px-4 py-2 rounded inline-block'>ALL DOCTORS</p></NavLink>
-                        <NavLink onClick={()=>setShowMenu(false)} to='/about'><p className='px-4 py-2 rounded inline-block'>ABOUT</p></NavLink>
-                        <NavLink onClick={()=>setShowMenu(false)} to='/contact'><p className='px-4 py-2 rounded inline-block'>CONTACT</p></NavLink>
+
+                <img onClick={() => setShowMenu(true)} className='w-7 md:hidden cursor-pointer' src={assets.menu_icon} alt="Menu" />
+            </div>
+
+            {/* Mobile Menu */}
+            <div className={`fixed top-0 right-0 w-full h-full bg-black/70 z-40 flex justify-end transition-all ${showMenu ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+                <div className='bg-white w-4/5 max-w-sm h-full p-6 flex flex-col gap-6 text-lg text-gray-700 shadow-2xl relative'>
+                    <img className='w-36' src={assets.logo} alt="Logo" />
+                    <img 
+                        className='w-6 absolute top-6 right-6 cursor-pointer' 
+                        onClick={() => setShowMenu(false)} 
+                        src={assets.cross_icon} 
+                        alt="Close" 
+                    />
+
+                    <ul className='flex flex-col gap-4 mt-10'>
+                        {['/', '/doctors', '/about', '/contact'].map((path, idx) => {
+                            const names = ['Home', 'All Doctors', 'About', 'Contact'];
+                            return (
+                                <NavLink 
+                                    key={idx} 
+                                    to={path} 
+                                    onClick={() => setShowMenu(false)}
+                                    className={({ isActive }) => 
+                                        `px-4 py-2 rounded hover:bg-primary/10 transition ${isActive ? 'text-primary font-semibold' : ''}`
+                                    }
+                                >
+                                    {names[idx]}
+                                </NavLink>
+                            )
+                        })}
                     </ul>
                 </div>
-
             </div>
+
         </div>
     )
 }

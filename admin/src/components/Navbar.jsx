@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
 
-    const {aToken,setAToken} = useContext(AdminContext)
+    const {aToken,setAToken,dToken,setDToken} = useContext(AdminContext)
     const navigate = useNavigate()
     const logout = () => {
       navigate('/')

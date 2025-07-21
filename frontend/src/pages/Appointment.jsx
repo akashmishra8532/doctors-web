@@ -8,95 +8,87 @@ import axios from 'axios'
 
 const Appointment = () => {
   const { docId } = useParams()
-  const { doctors, currencySymbol,backendUrl,token,getDoctorsData } = useContext(AppContext)
+  const { doctors, currencySymbol, backendUrl, token, getDoctorsData } = useContext(AppContext)
   const [docInfo, setDocInfo] = useState(null)
-
-  const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
-  const navigate = useNavigate()
   const [docSlots, setDocSlots] = useState([])
   const [slotIndex, setSlotIndex] = useState(0)
   const [slotTime, setSlotTime] = useState('')
 
-  const fetchDocInfo = async () => {
-    const docInfo = doctors.find(doc => doc._id === docId)
-    setDocInfo(docInfo)
+  const navigate = useNavigate()
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+  const fetchDocInfo = () => {
+    const doc = doctors.find(doc => doc._id === docId)
+    setDocInfo(doc)
   }
 
-  const getAvailableSlots = async () => {
-    if (!docInfo) return;  // Prevent execution if docInfo is null
+  const getAvailableSlots = () => {
+    if (!docInfo) return
 
-    setDocSlots([]);
-    let today = new Date();
+    setDocSlots([])
+    const today = new Date()
+
+    let slots = []
 
     for (let i = 0; i < 7; i++) {
-        let currentDate = new Date(today);
-        currentDate.setDate(today.getDate() + i);
-        let endTime = new Date();
-        endTime.setDate(today.getDate() + i);
-        endTime.setHours(21, 0, 0, 0);
+      const currentDate = new Date()
+      currentDate.setDate(today.getDate() + i)
 
-        if (today.getDate() === currentDate.getDate()) {
-            currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10);
-            currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0);
-        } else {
-            currentDate.setHours(10);
-            currentDate.setMinutes(0);
+      const endOfDay = new Date(currentDate)
+      endOfDay.setHours(21, 0, 0, 0)
+
+      if (i === 0) {
+        currentDate.setHours(Math.max(today.getHours() + 1, 10))
+        currentDate.setMinutes(today.getMinutes() > 30 ? 30 : 0)
+      } else {
+        currentDate.setHours(10, 0, 0, 0)
+      }
+
+      const daySlots = []
+      while (currentDate < endOfDay) {
+        const timeStr = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        const dateKey = `${currentDate.getDate()}_${currentDate.getMonth() + 1}_${currentDate.getFullYear()}`
+
+        const isBooked = docInfo.slots_booked?.[dateKey]?.includes(timeStr)
+        if (!isBooked) {
+          daySlots.push({
+            datetime: new Date(currentDate),
+            time: timeStr
+          })
         }
-
-        let timeSlots = [];
-
-        while (currentDate < endTime) {
-            let formattedTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            let day = currentDate.getDate();
-            let month = currentDate.getMonth() + 1;
-            let year = currentDate.getFullYear();
-            const slotDate = `${day}_${month}_${year}`;
-            const slotTime = formattedTime;
-
-            // Check if slots_booked exists
-            const isSlotAvailable = docInfo?.slots_booked?.[slotDate]?.includes(slotTime) ? false : true;
-
-            if (isSlotAvailable) {
-                timeSlots.push({
-                    datetime: new Date(currentDate),
-                    time: formattedTime
-                });
-            }
-
-            currentDate.setMinutes(currentDate.getMinutes() + 30);
-        }
-        setDocSlots(prev => [...prev, timeSlots]);
+        currentDate.setMinutes(currentDate.getMinutes() + 30)
+      }
+      slots.push(daySlots)
     }
-};
+    setDocSlots(slots)
+  }
 
   const bookAppointment = async () => {
     if (!token) {
-      toast.warn('Login to Book the Apointment')
+      toast.warn('Login to book the appointment')
       return navigate('/login')
     }
+
     try {
       const date = docSlots[slotIndex][0].datetime
+      const dateKey = `${date.getDate()}_${date.getMonth() + 1}_${date.getFullYear()}`
 
-      let day = date.getDate()
-      let month = date.getMonth()+1
-      let year = date.getFullYear()
-
-      const slotDate = day + "_"+ month + "_" + year 
-
-      const { data } = await axios.post(backendUrl + "/api/user/book-appointment", {docId,slotDate,slotTime},{headers : {token}})
+      const { data } = await axios.post(
+        backendUrl + '/api/user/book-appointment',
+        { docId, slotDate: dateKey, slotTime },
+        { headers: { token } }
+      )
 
       if (data.success) {
         toast.success(data.message)
         getDoctorsData()
         navigate('/my-appointments')
-      }else{
+      } else {
         toast.error(data.message)
       }
-    } catch (error) {
-      console.log(error)
-      toast.error(error.message)
+    } catch (err) {
+      toast.error(err.message)
     }
-
   }
 
   useEffect(() => {
@@ -108,92 +100,85 @@ const Appointment = () => {
   }, [docInfo])
 
   return docInfo && (
-    <div className="p-8 bg-gray-100 min-h-screen flex flex-col items-center">
-      {/* Doctor Details Container */}
-      <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full mb-8">
-        {docInfo ? (
+    <div className="p-6 md:p-10 bg-gray-100 min-h-screen flex flex-col items-center">
+      {/* Doctor Details */}
+      <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-2xl mb-10">
+        <div className="flex items-center gap-6">
+          <img src={docInfo.image} alt={docInfo.name} className="w-20 h-20 rounded-full object-cover shadow" />
           <div>
-            <div className="flex items-center space-x-4 mb-6">
-              <img
-                className="h-20 w-20 rounded-full object-cover shadow"
-                src={docInfo.image}
-                alt="Doctor"
-              />
-              <div>
-                <h2 className="text-2xl font-semibold text-gray-900 flex items-center">
-                  {docInfo.name}
-                  <img
-                    className="ml-2 h-5 w-5"
-                    src={assets.verified_icon}
-                    alt="Verified"
-                  />
-                </h2>
-                <p className="text-gray-600">{docInfo.degree} - {docInfo.speciality}</p>
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <p className="text-gray-800 text-sm font-medium mb-1">Experience</p>
-              <span className="bg-blue-500 text-white px-4 py-1 rounded-full">
-                {docInfo.experience}
-              </span>
-            </div>
-
-            {/* Doctor's About Section */}
-            <div className="mt-4">
-              <div className="flex items-center text-gray-700 font-semibold mb-2">
-                <p className="mr-2">About</p>
-                <img className="h-4 w-4" src={assets.info_icon} alt="Info" />
-              </div>
-              <p className="text-gray-600">{docInfo.about}</p>
-            </div>
-            <p className="text-gray-500 font-medium mt-4">
-              Appointment fee: <span className="text-gray-600">{currencySymbol}{docInfo.fees}</span>
-            </p>
+            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              {docInfo.name}
+              <img src={assets.verified_icon} alt="verified" className="w-5 h-5" />
+            </h2>
+            <p className="text-gray-600 text-sm">{docInfo.degree} - {docInfo.speciality}</p>
           </div>
-        ) : (
-          <p className="text-center text-gray-500">Loading doctor information...</p>
-        )}
+        </div>
+
+        <div className="mt-6">
+          <p className="font-medium text-gray-700">Experience</p>
+          <span className="inline-block bg-blue-500 text-white text-xs px-3 py-1 rounded-full mt-1">
+            {docInfo.experience}
+          </span>
+
+          <div className="mt-4">
+            <div className="flex items-center font-semibold text-gray-700 mb-2">
+              About <img src={assets.info_icon} className="w-4 h-4 ml-2" alt="info" />
+            </div>
+            <p className="text-gray-600 text-l">{docInfo.about}</p>
+          </div>
+
+          <p className="mt-4 text-gray-500 font-medium">
+            Appointment Fee: <span className="text-gray-800">{currencySymbol}{docInfo.fees}</span>
+          </p>
+        </div>
       </div>
 
-      {/* Booking Slot Section */}
-      <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full">
-        <p className="text-xl font-semibold text-gray-800 mb-4">Booking Slots</p>
-        
-        {/* Date Selection */}
-        <div className="flex gap-4 overflow-x-scroll pb-4">
-          {docSlots.length > 0 && docSlots.map((item, index) => (
-            <div 
-              key={index} 
-              onClick={() => setSlotIndex(index)}
-              className={`min-w-[80px] text-center py-3 rounded-lg cursor-pointer transition-colors ${slotIndex === index ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+      {/* Booking Slots */}
+      <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-2xl">
+        <p className="text-xl font-semibold text-gray-800 mb-5">Select a Slot</p>
+
+        {/* Date Slots */}
+        <div className="flex gap-5 overflow-x-auto pb-5">
+          {docSlots.map((item, index) => (
+            <button
+              key={index}
+              onClick={() => { setSlotIndex(index); setSlotTime('') }}
+              className={`min-w-[90px] text-center py-4 px-4 rounded-xl text-base font-semibold transition-all 
+                ${slotIndex === index ? 'bg-blue-500 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
-              <p className="font-medium">{item[0] && daysOfWeek[item[0].datetime.getDay()]}</p>
-              <p className="text-sm">{item[0] && item[0].datetime.getDate()}</p>
-            </div>
+              <p>{item[0]?.datetime.getDate()}</p>
+              <p className="text-sm">{daysOfWeek[item[0]?.datetime.getDay()]}</p>
+            </button>
           ))}
         </div>
 
-        {/* Time Slot Selection */}
-        <div className="flex gap-3 overflow-x-scroll mt-4">
-          {docSlots.length > 0 && docSlots[slotIndex].map((item, index) => (
+        {/* Time Slots */}
+        <div className="flex gap-5 overflow-x-auto mt-5">
+          {docSlots[slotIndex]?.map((item, index) => (
             <button
               key={index}
               onClick={() => setSlotTime(item.time)}
-              className={`text-sm font-medium px-4 py-2 rounded-full cursor-pointer transition-colors ${item.time === slotTime ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600 border border-gray-300'}`}
+              className={`px-5 py-3 rounded-full text-base font-medium border transition-all
+                ${item.time === slotTime ? 'bg-blue-500 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
               {item.time.toLowerCase()}
             </button>
           ))}
         </div>
 
-        <button onClick={bookAppointment} className="bg-blue-500 text-white text-sm font-medium px-6 py-2 rounded-lg mt-6 hover:bg-blue-600 transition-colors w-full">
-          Book an appointment
+        {/* Book Button */}
+        <button
+          onClick={bookAppointment}
+          disabled={!slotTime}
+          className={`w-full mt-8 py-4 rounded-xl text-base font-semibold transition-all
+            ${slotTime ? 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:opacity-90 text-white shadow-lg' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+        >
+          {slotTime ? 'Book Appointment' : 'Select Time to Book'}
         </button>
       </div>
 
-      {/* Related Doctors Section */}
-      <div className="w-full max-w-2xl mt-8">
+      {/* Related Doctors */}
+      <div className="w-full max-w-2xl mt-10">
         <RelatedDoctors docId={docId} speciality={docInfo.speciality} />
       </div>
     </div>
