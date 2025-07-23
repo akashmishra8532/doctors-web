@@ -1,14 +1,16 @@
 {
   "name": "backend",
   "version": "1.0.0",
+  "description": "",
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "server": "nodemon server.js",
-    "build": "npm rebuild bcrypt --build-from-source",
-    "postinstall": "npm rebuild mongoose"
+    "build": "npm rebuild bcrypt --build-from-source"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "author": "",
   "license": "ISC",
@@ -24,6 +26,5 @@
     "nodemon": "^3.1.9",
     "razorpay": "^2.9.5",
     "validator": "^13.12.0"
-  },
-  "description": ""
+  }
 }
