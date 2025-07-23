@@ -24,12 +24,16 @@ const Navbar = () => {
 
     
   return (
-    <div className='flex justify-between items-center px-4 sm:px-10 py-3 border-b bg-white'>
-        <div className='flex items-center gap-2 text-xs'>
-            <img className='w-36 sm:w-40 cursor-pointer' src={assets.admin_logo} alt=''/>
-            <p className='border px-2.5 py-0.5 rounded-full border-gray-500 text-gray-600'>{aToken ? 'Admin' : 'Doctor'}</p>
+    <div className='flex justify-between items-center px-4 sm:px-10 py-4 border-b bg-white shadow-sm'>
+        <div className='flex items-center gap-2 text-xs sm:text-sm'>
+            <img className='w-32 sm:w-40 cursor-pointer transition-transform duration-200 hover:scale-105' src={assets.admin_logo} alt='logo'/>
+            <p className='border px-3 py-1 rounded-full border-gray-400 text-gray-700 font-medium'>{aToken ? 'Admin' : 'Doctor'}</p>
         </div>
-        <button onClick={logout} className='bg-[#5F6FFF] text-white text-sm px-10 py-2 rounded-full' >Logout</button>
+        <button 
+            onClick={logout} 
+            className='bg-gradient-to-r from-[#5F6FFF] to-[#788BFF] text-white text-sm px-6 py-2 sm:px-10 rounded-full font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105'>
+            Logout
+        </button>
     </div>
   )
 }
