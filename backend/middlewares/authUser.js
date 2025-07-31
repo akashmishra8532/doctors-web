@@ -9,16 +9,15 @@ const authUser = async (req,res,next) =>{
             return res.json({success:false,message:"Not Authorized Login again"})
         }
 
-        //const token_decode=jwt.verify(token, process.env.JWT_SECRET)
-        const token_decode = jwt.verify(token, process.env.JWT_SECRET)
+        const token_decode = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_key')
 
         req.body.userId = token_decode.id
         
         next()
 
     } catch (error) {
-        console.log(error)
-        res.json({success:false,message:error.message})
+        console.log("JWT Verification Error:", error.message)
+        return res.json({success:false,message:"Token expired or invalid. Please login again."})
     }
 }
 

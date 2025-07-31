@@ -36,7 +36,7 @@ const registerUser = async (req, res) => {
         const newUser = new userModel(userData)
         const user = await newUser.save()
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'fallback_secret_key', { expiresIn: '7d' })
         res.json({ success: true, token })
 
 
@@ -58,7 +58,7 @@ const loginUser = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password)
 
         if (isMatch) {
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'fallback_secret_key', { expiresIn: '7d' })
             res.json({ success: true, token })
         } else {
             res.json({ success: false, message: 'Invalid Credentials' })
@@ -94,7 +94,18 @@ const updateProfile = async (req, res) => {
             return res.json({ success: false, message: "Name Missing" })
         }
 
-        await userModel.findByIdAndUpdate(userId, { name, phone, address: JSON.parse(address), dob, gender })
+        // Safely parse address or use as is
+        let parsedAddress = address;
+        if (typeof address === 'string') {
+            try {
+                parsedAddress = JSON.parse(address);
+            } catch (error) {
+                // If parsing fails, use address as is
+                parsedAddress = address;
+            }
+        }
+        
+        await userModel.findByIdAndUpdate(userId, { name, phone, address: parsedAddress, dob, gender })
 
         if (imageFile) {
             //upload image to cloudinary
