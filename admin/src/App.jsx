@@ -13,7 +13,7 @@ import { DoctorContext } from './context/DoctorContext';
 import DoctorDashboard from './pages/Doctor/DoctorDashboard';
 import DoctorProfile from './pages/Doctor/DoctorProfile';
 import DoctorAppointments from './pages/Doctor/DoctorAppointments';
-import { AdminContext } from './context/adminContext';
+import { AdminContext } from './context/AdminContext';
 
 const App = () => {
 

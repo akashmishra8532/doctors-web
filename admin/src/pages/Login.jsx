@@ -4,7 +4,7 @@ import { assets } from '../assets/assets'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { DoctorContext } from '../context/DoctorContext'
-import { AdminContext } from '../context/adminContext'
+import { AdminContext } from '../context/AdminContext'
 
 
 const Login = () => {
