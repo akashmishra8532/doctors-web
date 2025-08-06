@@ -1,6 +1,6 @@
 import React from 'react'
 import { useContext } from 'react'
-import { AdminContext } from '../../context/AdminContext'
+import { AdminContext } from '../../context/adminContext'
 import { useEffect } from 'react'
 import { assets } from '../../assets/assets'
 import { AppContext } from '../../context/AppContext'
