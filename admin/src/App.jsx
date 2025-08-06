@@ -22,11 +22,11 @@ const App = () => {
 
 
   return aToken || dToken ? (
-    <div className='bg-[#F8F9FD]'>
+    <div className=' bg-[#F8F9FD]'>
       
       <ToastContainer/>
       <Navbar/>
-      <div className='flex items-start pt-[80px]'>
+      <div className='flex items-start'>
         <Sidebar/>
         <Routes>
           {/* admin route */}
