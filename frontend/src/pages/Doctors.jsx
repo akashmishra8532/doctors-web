@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
+import AIDoctorRecommendation from '../components/AIDoctorRecommendation'
 
 const Doctors = () => {
   const { speciality } = useParams()
@@ -29,6 +30,9 @@ const Doctors = () => {
   return (
     <div className='px-4 md:px-10 my-10'>
       <h2 className='text-2xl font-semibold text-gray-800 mb-3'>Browse trusted doctors by speciality.</h2>
+      
+      {/* AI Doctor Recommendation */}
+      <AIDoctorRecommendation />
 
       {/* Filters Pills + Clear Filter */}
       <div className='flex flex-wrap gap-3 mt-4 mb-8 justify-center sm:justify-start'>

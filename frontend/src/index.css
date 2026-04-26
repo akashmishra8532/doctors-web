@@ -1,23 +1,244 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
 
-*{
-  font-family: Outfit;
-}
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 min-h-screen;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  * {
+    @apply scroll-smooth;
+  }
 
-.active hr{
-  @apply block
-}
-
-::-webkit-scrollbar{
-  @apply hidden
-}
-
-@media (max-width:740px){
-  .active p{
-    @apply text-white bg-primary
+  html {
+    scroll-behavior: smooth;
   }
 }
+
+@layer components {
+  /* Button Styles */
+  .btn-primary {
+    @apply bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/50 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold border-2 border-indigo-600 transition-all duration-300 hover:bg-indigo-50;
+  }
+
+  .btn-outline {
+    @apply px-6 py-3 rounded-full font-semibold border-2 border-indigo-600 text-indigo-600 transition-all duration-300 hover:bg-indigo-600 hover:text-white;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:bg-indigo-100 text-indigo-600;
+  }
+
+  /* Card Styles */
+  .card-modern {
+    @apply bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/20 overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-white/40;
+  }
+
+  .card-glass {
+    @apply bg-white/40 backdrop-blur-2xl rounded-2xl border border-white/30 p-6 shadow-lg;
+  }
+
+  .card-dark {
+    @apply bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white/10;
+  }
+
+  /* Input Styles */
+  .input-modern {
+    @apply w-full px-4 py-3 bg-white/80 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300;
+  }
+
+  .input-glass {
+    @apply w-full px-4 py-3 bg-white/20 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-300 backdrop-blur-xl;
+  }
+
+  /* Badge Styles */
+  .badge-primary {
+    @apply inline-flex items-center px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 font-medium text-sm;
+  }
+
+  .badge-success {
+    @apply inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 font-medium text-sm;
+  }
+
+  .badge-warning {
+    @apply inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium text-sm;
+  }
+
+  /* Text Styles */
+  .text-gradient {
+    @apply bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-blue {
+    @apply bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
+  }
+}
+
+@layer utilities {
+  /* Glass Effect */
+  .glass {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20;
+  }
+  
+  .glass-dark {
+    @apply bg-gray-900/70 backdrop-blur-lg border border-white/10;
+  }
+
+  /* Gradient Utilities */
+  .gradient-text {
+    @apply bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent;
+  }
+
+  .gradient-bg-primary {
+    @apply bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500;
+  }
+
+  /* Shadow Effects */
+  .shadow-glow {
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.3), 0 0 60px rgba(99, 102, 241, 0.15);
+  }
+  
+  .shadow-glow-purple {
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.3), 0 0 60px rgba(168, 85, 247, 0.15);
+  }
+  
+  .shadow-glow-pink {
+    box-shadow: 0 0 30px rgba(236, 72, 153, 0.3), 0 0 60px rgba(236, 72, 153, 0.15);
+  }
+
+  /* Backdrop Effects */
+  .blur-back {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .blur-back-lg {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* Transitions */
+  .smooth-transition {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .smooth-transition-lg {
+    @apply transition-all duration-500 ease-out;
+  }
+
+  /* Flex Utilities */
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+
+  /* Grid Utilities */
+  .grid-cols-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+  }
+
+  /* Text Utilities */
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Link Utilities */
+  .link-hover {
+    @apply relative inline-block transition-all duration-300;
+  }
+
+  .link-hover::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-600 to-purple-600 transition-all duration-300;
+  }
+
+  .link-hover:hover::after {
+    @apply w-full;
+  }
+}
+
+* {
+  font-family: 'Outfit', 'Poppins', sans-serif;
+}
+
+.active hr {
+  @apply block;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-indigo-400 rounded-full hover:bg-indigo-600;
+}
+
+@media (max-width: 740px) {
+  .active p {
+    color: white;
+    background-color: #5f6FFF;
+  }
+
+  .grid-cols-responsive {
+    @apply grid-cols-1 sm:grid-cols-2;
+  }
+}
+
+/* Custom Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
 

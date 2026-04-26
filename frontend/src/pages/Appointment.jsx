@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { AppContext } from '../context/AppContext'
 import { assets } from '../assets/assets'
 import RelatedDoctors from '../components/RelatedDoctors'
+import AIAppointmentTips from '../components/AIAppointmentTips'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 
@@ -102,7 +104,7 @@ const Appointment = () => {
   return docInfo && (
     <div className="p-6 md:p-10 bg-gray-100 min-h-screen flex flex-col items-center">
       {/* Doctor Details */}
-      <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-2xl mb-10">
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl p-6 w-full max-w-2xl mb-10 border border-white/20">
         <div className="flex items-center gap-6">
           <img src={docInfo.image} alt={docInfo.name} className="w-20 h-20 rounded-full object-cover shadow" />
           <div>
@@ -133,8 +135,13 @@ const Appointment = () => {
         </div>
       </div>
 
+      {/* AI Appointment Tips */}
+      <div className="w-full max-w-2xl mb-6">
+        <AIAppointmentTips doctorSpeciality={docInfo.speciality} />
+      </div>
+
       {/* Booking Slots */}
-      <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-2xl">
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl p-6 w-full max-w-2xl border border-white/20">
         <p className="text-xl font-semibold text-gray-800 mb-5">Select a Slot</p>
 
         {/* Date Slots */}
@@ -167,14 +174,16 @@ const Appointment = () => {
         </div>
 
         {/* Book Button */}
-        <button
+        <motion.button
           onClick={bookAppointment}
           disabled={!slotTime}
           className={`w-full mt-8 py-4 rounded-xl text-base font-semibold transition-all
-            ${slotTime ? 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:opacity-90 text-white shadow-lg' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+            ${slotTime ? 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:shadow-lg text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+          whileHover={slotTime ? { scale: 1.02 } : {}}
+          whileTap={slotTime ? { scale: 0.98 } : {}}
         >
           {slotTime ? 'Book Appointment' : 'Select Time to Book'}
-        </button>
+        </motion.button>
       </div>
 
       {/* Related Doctors */}
