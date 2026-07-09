@@ -2,8 +2,6 @@
 
 Full-stack MERN application for booking doctor appointments with AI-powered features.
 
-## 🌐 Live Demo
-[https://doctors-web-1.onrender.com](https://doctors-web-1.onrender.com)
 
 ## ✨ Features
 - User authentication (patients, doctors, admin)
